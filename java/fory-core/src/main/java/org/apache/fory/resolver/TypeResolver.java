@@ -444,6 +444,9 @@ public abstract class TypeResolver {
   public abstract ClassDef getTypeDef(Class<?> cls, boolean resolveParent);
 
   public final boolean isSerializable(Class<?> cls) {
+    if (cls.isEnum()) {
+      return true;
+    }
     if (ReflectionUtils.isAbstract(cls) || cls.isInterface()) {
       return false;
     }
