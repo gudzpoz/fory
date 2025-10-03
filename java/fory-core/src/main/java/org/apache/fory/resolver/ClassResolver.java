@@ -1800,7 +1800,10 @@ public class ClassResolver extends TypeResolver {
                 createSerializer0(cls);
               }
               if (cls.isArray()) {
-                createSerializer0(TypeUtils.getArrayComponent(cls));
+                Class<?> component = TypeUtils.getArrayComponent(cls);
+                if (isSerializable(component)) {
+                  createSerializer0(component);
+                }
               }
             }
           });

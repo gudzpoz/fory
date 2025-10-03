@@ -29,6 +29,8 @@ public class ArrayExample {
 
   static {
     FORY.register(ArrayExample.class);
+    FORY.register(ConcreteObject.class);
+    FORY.register(AbstractObject[].class);
     FORY.ensureSerializersCompiled();
   }
 
@@ -37,6 +39,7 @@ public class ArrayExample {
   int[] ints;
   long[] longs;
   Object[] objects;
+  AbstractObject[] abstractObjects;
 
   public static void main(String[] args) {
     FORY.reset();
@@ -46,6 +49,7 @@ public class ArrayExample {
     arrayExample.ints = new int[] {0xF0F0F01, 0xF0F0F02, 0xF0F0F03, 0xF0F0F04};
     arrayExample.longs = new long[] {0x0FFF_0000_FFFF_0001L, 0x0FFF_0000_FFFF_0002L};
     arrayExample.objects = new Object[] {"A", "B"};
+    arrayExample.abstractObjects = new AbstractObject[] {new ConcreteObject(42)};
 
     byte[] bytes = FORY.serialize(arrayExample);
     ArrayExample deserialized = FORY.deserialize(bytes, ArrayExample.class);
@@ -54,6 +58,20 @@ public class ArrayExample {
     Preconditions.checkArgument(Arrays.equals(arrayExample.ints, deserialized.ints));
     Preconditions.checkArgument(Arrays.equals(arrayExample.longs, deserialized.longs));
     Preconditions.checkArgument(Arrays.equals(arrayExample.objects, deserialized.objects));
+    Preconditions.checkArgument(Arrays.equals(arrayExample.abstractObjects, deserialized.abstractObjects));
     System.out.println("ArrayExample succeed");
+  }
+
+  public abstract static class AbstractObject {
+  }
+  public static class ConcreteObject extends AbstractObject {
+    private final int i;
+    public ConcreteObject(int i) {
+      this.i = i;
+    }
+    @Override
+    public boolean equals(Object obj) {
+      return obj instanceof ConcreteObject && ((ConcreteObject) obj).i == i;
+    }
   }
 }
